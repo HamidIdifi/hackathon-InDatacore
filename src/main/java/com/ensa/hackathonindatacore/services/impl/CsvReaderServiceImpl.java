@@ -1,23 +1,20 @@
-package com.ensa.hackathonindatacore.services;
+package com.ensa.hackathonindatacore.services.impl;
 
 import com.ensa.hackathonindatacore.entities.Person;
 import com.ensa.hackathonindatacore.enums.Gender;
+import com.ensa.hackathonindatacore.services.CsvReaderService;
 import com.opencsv.CSVReader;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
-import java.io.Reader;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.FileReader;
 import java.util.List;
 
 @Service
 public class CsvReaderServiceImpl implements CsvReaderService {
     @Override
     public List<String[]> readAllPersons() throws Exception {
-        Path path = Paths.get(
-                ClassLoader.getSystemResource("personsData.csv").toURI());
-        return readAllLines(path);
+        return readAllLines();
     }
 
     @Override
@@ -32,11 +29,9 @@ public class CsvReaderServiceImpl implements CsvReaderService {
                 .build();
     }
 
-    public List<String[]> readAllLines(Path filePath) throws Exception {
-        try (Reader reader = Files.newBufferedReader(filePath)) {
-            try (CSVReader csvReader = new CSVReader(reader)) {
-                return csvReader.readAll();
-            }
+    public List<String[]> readAllLines() throws Exception {
+        try (CSVReader csvReader = new CSVReader(new FileReader(new ClassPathResource("personsData.csv").getFile()))) {
+            return csvReader.readAll();
         }
     }
 }
